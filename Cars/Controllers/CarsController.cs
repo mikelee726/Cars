@@ -46,11 +46,20 @@ namespace Cars.Controllers
 
             return JsonConvert.DeserializeObject<IEnumerable<Auto>>(source);
         }
-
         [HttpGet]
-        public IEnumerable<Auto> Get()
+        public IEnumerable<Auto> Get([FromQuery] AutoFilter filter)
         {
             autos = GetDataSet();
+
+            if (string.IsNullOrEmpty(filter.SearchText) == false)
+            {
+                autos = autos.Where(x => x.Name.ToLower().Contains(filter.SearchText.ToLower()));
+            }
+
+            if (filter.Country != "View All")
+            {
+                autos = autos.Where(x => x.Country == filter.Country);
+            }
             return autos.ToArray();
         }
 
@@ -58,7 +67,7 @@ namespace Cars.Controllers
         public IEnumerable<string> GetCountries()
         {
             autos = GetDataSet();
-            var countries = autos.Select(x => x.Country).Distinct().ToArray();
+            var countries = autos.Select(x => x.Country).Where(x => string.IsNullOrEmpty(x) == false).Distinct().ToArray();
             return countries;
         }
     }

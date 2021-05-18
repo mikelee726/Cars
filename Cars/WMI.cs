@@ -14,5 +14,12 @@ namespace Cars
         public string Name { get; set; }
         public string UpdatedOn { get; set; }
         public string WMI { get; set; }
+        public string VehicleType { get; set; }
+    }
+
+    public class AutoFilter
+    {
+        public string SearchText { get; set; }
+        public string Country { get; set; }
     }
 }

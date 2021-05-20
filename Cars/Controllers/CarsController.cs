@@ -65,6 +65,7 @@ namespace Cars.Controllers
 
         [HttpGet("countries")]
         public IEnumerable<string> GetCountries()
+
         {
             autos = GetDataSet();
             var countries = autos.Select(x => x.Country).Where(x => string.IsNullOrEmpty(x) == false).Distinct().ToArray();

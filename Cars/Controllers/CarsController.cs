@@ -17,11 +17,6 @@ namespace Cars.Controllers
         private readonly string pathToFile;
         private IEnumerable<Auto> autos;
 
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<CarsController> _logger;
 
         public CarsController(ILogger<CarsController> logger, IWebHostEnvironment env)
@@ -53,19 +48,22 @@ namespace Cars.Controllers
 
             if (string.IsNullOrEmpty(filter.SearchText) == false)
             {
-                autos = autos.Where(x => x.Name.ToLower().Contains(filter.SearchText.ToLower()));
+                autos = autos.Where(x => x.Name.IndexOf(filter.SearchText, StringComparison.CurrentCultureIgnoreCase) >= 0
+                || x.VehicleType.Equals(filter.SearchText, StringComparison.CurrentCultureIgnoreCase) == true
+                || x.WMI.Equals(filter.SearchText, StringComparison.CurrentCultureIgnoreCase) == true);
+
             }
 
             if (filter.Country != "View All")
             {
                 autos = autos.Where(x => x.Country == filter.Country);
             }
-            return autos.ToArray();
+
+            return autos;
         }
 
         [HttpGet("countries")]
         public IEnumerable<string> GetCountries()
-
         {
             autos = GetDataSet();
             var countries = autos.Select(x => x.Country).Where(x => string.IsNullOrEmpty(x) == false).Distinct().ToArray();
